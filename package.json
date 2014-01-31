@@ -1,0 +1,29 @@
+{
+    "name":"js-util",
+    "title":"utilitaires Javascript",
+    "description":"utilitaires Javascript",
+    "version":"0.1.0",
+    "homepage":"https://github.com/mlaville/js-util",
+    "author":{
+        "name":"marc laville",
+        "email":"marc laville@polinux.net",
+        "url":"http://www.polinux.fr"
+    },
+    "repository":{
+        "type":"git",
+        "url":"git://github.com/mlaville/js-util.git"
+    },
+    "bugs":{
+        "url":"https://github.com/mlaville/js-util/issues"
+    },
+    "licenses":[
+        {
+            "type":"MIT",
+            "url":"https://github.com/mlaville/js-util/blob/master/LICENSE"
+        }],
+    "dependencies":{
+    },
+    "devDependencies":{
+    },
+    "keywords":[javascript]
+}
