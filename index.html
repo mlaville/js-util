@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8" />
+	<title>js-util</title>
+	<meta content="marc Laville - polinux" name="author" />
+	<meta content="Démo js-util" name="description" />
+	<link type="text/css" rel="stylesheet" href="./css/xxx.css" />
+	<style>
+	div{ width:180px; font-family:Georgia, Times, serif; font-size:12px; }
+	ul { list-style: none; }
+	div ul li { line-height:24px; border-bottom-style:solid; border-bottom-width:1px; border-bottom-color:#CCCCCC; padding-left:10px;}
+	nav ul li { display: inline; border-style:solid; border-width:1px; border-color:#CCCCCC; padding:4px;}
+	</style>
+	<script type="text/javascript" src="./js-util.js"></script>
+	
+</head>
+<body>
+test-polinux
+<br>
+<nav>
+	<ul>
+	<li><a href="#">bg</a></li>
+	<li><a href="#">de</a></li>
+	<li><a href="#">el</a></li>
+	<li><a href="#">en</a></li>
+	<li><a href="#">es</a></li>
+	<li><a href="#">fi</a></li>
+	<li><a href="#">fr</a></li>
+	<li><a href="#">it</a></li>
+	<li><a href="#">ko</a></li>
+	<li><a href="#">pt</a></li>
+	<li><a href="#">nl</a></li>
+	<li><a href="#">ro</a></li>
+	<li><a href="#">sv</a></li>
+	</ul>
+</nav>
+
+<h3>Jours</h3>
+<div id='jour'></div>
+<h3>Mois</h3>
+<div id='mois'></div>
+<script>
+	document.getElementById('jour').innerHTML = '<ul><li>' + Date.dayNames( ).join('</li><li>') + '</ul></li>';
+	document.getElementById('mois').innerHTML = '<ul><li>' + Date.monthNames( ).join('</li><li>') + '</ul></li>';
+	var countryLinks = document.querySelectorAll('nav a');
+	for( i = countryLinks.length ; i > 0 ; i-- ) {
+		eltA = countryLinks[i-1].addEventListener( 'click', function( e ) {
+			var lang = e.target.textContent;
+			document.getElementById('jour').innerHTML = '<ul><li>' + Date.dayNames( lang ).join('</li><li>') + '</ul></li>';
+			document.getElementById('mois').innerHTML = '<ul><li>' + Date.monthNames( lang ).join('</li><li>') + '</ul></li>';
+		});
+	}
+</script>
+</body>
+</html>
