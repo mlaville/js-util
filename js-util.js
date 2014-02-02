@@ -61,19 +61,22 @@ String.prototype.trim = function(){return this.replace(/^\s+|\s+$/g, "");};
 		indexMonth = 2; // Month position in the String returned to toLocaleString 
 	
 	switch( (lang.split('-'))[0] ) {
+		case 'bg' : ;
 		case 'en' : ;
 		case 'ko' : indexMonth = 1;
 			break ;
-		case 'es' : indexMonth = 3;
+		case 'es' : ;
+		case 'pt' : ;
+		case 'sv' : indexMonth = 3;
 			break ;
-		default : 
+		default : ;
 	}
 
 	dateRef.setMonth(0);
 	dateRef.setDate(10);
 	while (year == dateRef.getFullYear()) {
 		/* push le mois en lettre et passe au mois suivant */
-		arrMonth.push( dateRef.toLocaleDateString( lang, options ).split(' ')[indexMonth] );
+		arrMonth.push( dateRef.toLocaleDateString( lang, options ).split(' ')[indexMonth].replace(/,$/g, "") );
 //		arrMonth.push( dateRef.toLocaleDateString( lang, options ) );
 		dateRef.setMonth( dateRef.getMonth() + 1);
 	}
@@ -95,6 +98,7 @@ Date.dayNames = Date.dayNames || function( locales ) {
 		indexDay = 0; // Day position in the String returned to toLocaleString 
 		
 	switch( (lang.split('-'))[0] ) {
+		case 'bg' : ;
 		case 'ko' : indexDay = 3;
 			break ;
 		default : 
