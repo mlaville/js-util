@@ -44,7 +44,27 @@ pxUtil.toLocaleDateStringSupportsLocales = function () {
   * Classique troncature des espaces de part et d'autre d'une chaine
   */
 String.prototype.trim = function(){return this.replace(/^\s+|\s+$/g, "");};
-//                               -------
+//                              -------
+String.prototype.repeat = String.prototype.repeat || function( nb ){
+//                              ----------
+  return (nb > 0) ? this.concat( this.repeat( nb - 1 ) ) : '' ;
+};
+
+
+Number.prototype.toTimeString = function() {
+//                               -------------------
+	var timeString = "";
+	
+	if(this > 0){
+		var s = this % 60,
+			m = (( this - s ) / 60) % 60,
+			h = ( this - ( 60 * m ) - s ) / 3600;
+    timeString = "" + h + ":" + ("0" + m).slice(-2) + ":" + ("0" + s).slice(-2);
+//		ret = "" + h + "h" + ("0" + m).slice(-2);
+	}
+	
+	return timeString;
+}
 
 /*
  * L'Objet Date sait revoyer la liste des noms de mois
