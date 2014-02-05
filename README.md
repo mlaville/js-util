@@ -6,6 +6,10 @@ Extention des Objets Javascript
 
 **String**
 * trim
+* repeat
+
+**Number**
+time string
 
 **Date**
 * monthNames
