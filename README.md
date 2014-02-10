@@ -9,7 +9,7 @@ Extention des Objets Javascript
 * repeat
 
 **Number**
-time string
+* time string
 
 **Date**
 * monthNames
