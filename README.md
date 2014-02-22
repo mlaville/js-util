@@ -5,8 +5,10 @@ Extention des Objets Javascript
 -------------------------------
 
 **String**
-* trim
+* trim (obsolete)
 * repeat
+* lpad
+* rpad
 
 **Number**
 * time string
