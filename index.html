@@ -11,6 +11,19 @@
 	ul { list-style: none; }
 	div ul li { line-height:24px; border-bottom-style:solid; border-bottom-width:1px; border-bottom-color:#CCCCCC; padding-left:10px;}
 	nav ul li { display: inline; border-style:solid; border-width:1px; border-color:#CCCCCC; padding:4px;}
+	output {
+	    border-radius: 3px;
+		border: none;
+		box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset, 0 -1px 0 rgba(0,0,0,0.05) inset;
+		transition: all 0.2s linear;
+		font-family:courier new, courier, monospace;
+		font-size: 16px;
+		font-weight:bold;
+		color:#000000;
+		text-align:center;
+		background-color:#E0E0E0;
+}
+
 	</style>
 	<script type="text/javascript" src="./js-util.js"></script>
 	
@@ -40,6 +53,12 @@ test-polinux
 <div id='jour'></div>
 <h3>Mois</h3>
 <div id='mois'></div>
+<hr />
+<form id='test'>
+<input name='initStr' type='text' value='  polinux  ' />
+<output name='outStrl' type='text' value='xxxx' >???</output>
+<output name='outStrr' type='text' value='xxxx' >???</output>
+</form>
 <script>
 	document.getElementById('jour').innerHTML = '<ul><li>' + Date.dayNames( ).join('</li><li>') + '</ul></li>';
 	document.getElementById('mois').innerHTML = '<ul><li>' + Date.monthNames( ).join('</li><li>') + '</ul></li>';
@@ -51,6 +70,20 @@ test-polinux
 			document.getElementById('mois').innerHTML = '<ul><li>' + Date.monthNames( lang ).join('</li><li>') + '</ul></li>';
 		});
 	}
+</script>
+<script>
+var formTest = document.getElementById('test');
+
+formTest.initStr.addEventListener( 'input', function( event ) {
+	if (event.stopPropagation) {
+	  event.stopPropagation();
+	}
+	event.preventDefault();
+	event.target.form.outStrl.value = event.target.form.initStr.value.lpad( '*', 10 );
+	event.target.form.outStrr.value = event.target.form.initStr.value.rpad( '*', 10 );
+	
+	return;
+});
 </script>
 </body>
 </html>
