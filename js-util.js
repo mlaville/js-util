@@ -43,12 +43,23 @@ pxUtil.toLocaleDateStringSupportsLocales = function () {
 /*
   * Classique troncature des espaces de part et d'autre d'une chaine
   */
-String.prototype.trim = function(){return this.replace(/^\s+|\s+$/g, "");};
+// Devenu obsolete : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim#Browser_compatibility
+// String.prototype.trim = function(){return this.replace(/^\s+|\s+$/g, "");};
 //                              -------
 String.prototype.repeat = String.prototype.repeat || function( nb ){
 //                              ----------
-  return (nb > 0) ? this.concat( this.repeat( nb - 1 ) ) : '' ;
+//  return (nb > 0) ? this.concat( this.repeat( nb - 1 ) ) : '' ;
+  return (nb > 0) ? this + this.repeat( nb - 1 ) : '' ;
 };
+String.prototype.rpad = String.prototype.lpad || function( str, lg ){
+//                              ----------
+  return (lg > 0) ? this.concat( str.repeat( lg ) ).slice( 0, lg ) : '' ;
+};
+String.prototype.lpad = String.prototype.lpad || function( str, lg ){
+//                              ----------
+  return (lg > 0) ? str.repeat( lg ).concat(this).slice( -lg ) : '' ;
+};
+
 
 
 Number.prototype.toTimeString = function() {
