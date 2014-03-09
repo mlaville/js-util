@@ -60,7 +60,15 @@ String.prototype.lpad = String.prototype.lpad || function( str, lg ){
   return (lg > 0) ? str.repeat( lg ).concat(this).slice( -lg ) : '' ;
 };
 
-
+/**
+ * Checks if the string starts with the given substring
+ * @param  {String} strStartsWith   Substring to check starting with
+ * @return {Boolean}    true if string starts with the given substring, false otherwise
+ * @author Tomislav Capan
+ */
+String.prototype.startsWith = String.prototype.startsWith || function(strStartsWith) {
+  return strStartsWith === this.substring(0, strStartsWith.length);
+};
 
 Number.prototype.toTimeString = function() {
 //                               -------------------
