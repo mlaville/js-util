@@ -51,9 +51,15 @@ pxUtil.toLocaleDateStringSupportsLocales = function () {
 // Devenu obsolete : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim#Browser_compatibility
 // String.prototype.trim = function(){return this.replace(/^\s+|\s+$/g, "");};
 //                              -------
+/**
+ * Répétion d'une chaine
+ * 
+ * @param {Number} nb : le nombre de répétition
+ * 
+ * @return {String} La chaine répètée 
+ */
 String.prototype.repeat = String.prototype.repeat || function( nb ){
 //                              ----------
-//  return (nb > 0) ? this.concat( this.repeat( nb - 1 ) ) : '' ;
   return (nb > 0) ? this + this.repeat( nb - 1 ) : '' ;
 };
 String.prototype.rpad = String.prototype.lpad || function( str, lg ){
