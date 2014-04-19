@@ -22,10 +22,10 @@ var pxUtil = { };
 
 /**
  * Gère la sélection d'un element input
- * @param {Number} inputElt element 
- * @param {Number} min Upper bound of range
- * @param {Number} max Lower bound of range
- * @return {Boolean} Returns true when value is inside the given range
+ * 
+ * @param {HTMLInputElement} inputElt : le champ à sélectionner
+ * 
+ * @return {} Returns 
  */
 pxUtil.select = function( inputElt ) { return inputElt.setSelectionRange(0, inputElt.value.length); }
 
