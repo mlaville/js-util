@@ -96,18 +96,18 @@ Number.prototype.toTimeString = function() {
 	return timeString;
 }
 
-/*
+ /**
  * L'Objet Date sait revoyer la liste des noms de mois
+ * @param  {String} locales   Langage identifier ('fr', 'es','en' ...)
+ * @param  {String} optMonth   'long', 'short', .... 
+ * 			see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString#Example:_Using_options
+ * @return {Array}   month name array
+ * @author marc laville
  */
- 
- Date.monthNames = Date.monthNames || function( locales, optMonth ) {
-//       ---------------
+Date.monthNames = Date.monthNames || function( locales, optMonth ) {
+//        ----------------
 	var arrMonth = [],
-		dateRef = new Date(),
-		year = dateRef.getFullYear(),
-        // Firefox don't support parametres, so we construct option to conform to Firefox format
-        options = {weekday: "long", year: "numeric", month: optMonth || "long", day: "numeric"},
-		lang = pxUtil.toLocaleDateStringSupportsLocales() ? locales || window.navigator.language : window.navigator.language,
+		lang = locales || window.navigator.language,
 		indexMonth = 2; // Month position in the String returned to toLocaleString 
 	
 	switch( (lang.split('-'))[0] ) {
@@ -122,13 +122,11 @@ Number.prototype.toTimeString = function() {
 		default : ;
 	}
 
-	dateRef.setMonth(0);
-	dateRef.setDate(10);
-	while (year == dateRef.getFullYear()) {
-		/* push le mois en lettre et passe au mois suivant */
-		arrMonth.push( dateRef.toLocaleDateString( lang, options ).split(' ')[indexMonth].replace(/,$/g, "") );
-//		arrMonth.push( dateRef.toLocaleDateString( lang, options ) );
-		dateRef.setMonth( dateRef.getMonth() + 1);
+	for( var dateRef = new Date(2001, 0, 10), m = 0, arr = [] ; m < 12 ; m++ ) {
+	
+		dateRef.setMonth(m);
+		arr = dateRef.toLocaleDateString( lang, { month: optMonth || "long" } ).split(' ');
+		arrMonth.push( arr[ arr.length > 1 ? indexMonth : 0 ].replace(/,$/g, "") );
 	}
 	
 	return arrMonth;
