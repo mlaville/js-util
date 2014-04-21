@@ -33,7 +33,7 @@ pxUtil.select = function( inputElt ) { return inputElt.setSelectionRange(0, inpu
 pxUtil.selectOnClick = function( event ) { return pxUtil.select( event.currentTarget ); };
 //           --------------------
 
-pxUtil.toLocaleDateStringSupportsLocales = function () {
+Date.toLocaleDateStringSupportsLocales = function () {
     try {
         new Date().toLocaleDateString("i");
     } catch (e) {
@@ -95,8 +95,21 @@ Number.prototype.toTimeString = function() {
 	
 	return timeString;
 }
+/**
+ * L'Objet Date support t'il la localisation ,
+  * see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString#Example:_Checking_for_support_for_locales_and_options_arguments
+  * @return {Boolean}  
+ */
+Date.toLocaleDateStringSupportsLocales = function () {
+    try {
+        new Date().toLocaleDateString("i");
+    } catch (e) {
+        return e.name === "RangeError";
+    }
+    return false;
+}
 
- /**
+/**
  * L'Objet Date sait revoyer la liste des noms de mois
  * @param  {String} locales   Langage identifier ('fr', 'es','en' ...)
  * @param  {String} optMonth   'long', 'short', .... 
@@ -105,11 +118,10 @@ Number.prototype.toTimeString = function() {
  * @author marc laville
  */
 Date.monthNames = Date.monthNames || function( locales, optMonth ) {
-//        ----------------
+//       ---------------
 	var arrMonth = [],
-		lang = locales || window.navigator.language,
+		lang = Date.toLocaleDateStringSupportsLocales()  ? (locales || window.navigator.language) : window.navigator.language,
 		indexMonth = 2; // Month position in the String returned to toLocaleString 
-	
 	switch( (lang.split('-'))[0] ) {
 		case 'bg' : ;
 		case 'en' : ;
@@ -122,7 +134,7 @@ Date.monthNames = Date.monthNames || function( locales, optMonth ) {
 		default : ;
 	}
 
-	for( var dateRef = new Date(2001, 0, 10), m = 0, arr = [] ; m < 12 ; m++ ) {
+    for( var dateRef = new Date(2001, 0, 10), m = 0, arr = [] ; m < 12 ; m++ ) {
 	
 		dateRef.setMonth(m);
 		arr = dateRef.toLocaleDateString( lang, { month: optMonth || "long" } ).split(' ');
@@ -162,3 +174,21 @@ Date.dayNames = Date.dayNames || function( locales ) {
 	return arrDay;
 }
 
+/**
+ * Calcul le jour de Paques
+ */
+Date.easterDay = function( annee ) {
+    var C = Math.floor(annee/100);
+    var N = annee - 19*Math.floor(annee/19);
+    var K = Math.floor((C - 17)/25);
+    var I = C - Math.floor(C/4) - Math.floor((C - K)/3) + 19*N + 15;
+    I = I - 30*Math.floor((I/30));
+    I = I - Math.floor(I/28)*(1 - Math.floor(I/28)*Math.floor(29/(I + 1))*Math.floor((21 - N)/11));
+    var J = annee + Math.floor(annee/4) + I + 2 - C + Math.floor(C/4);
+    J = J - 7*Math.floor(J/7);
+    var L = I - J;
+    var M = 3 + Math.floor((L + 40)/44);
+    var D = L + 28 - 31*Math.floor(M/4);
+
+    return new Date( annee, M - 1 , D );
+}
