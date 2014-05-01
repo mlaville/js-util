@@ -9,12 +9,13 @@ Extention des Objets Javascript
 * repeat
 * lpad
 * rpad
+* capitalize
 
 **Number**
 * time string
 
 **Date**
-* monthNames
+* monthNames<br>
 Un [exemple](http://jsfiddle.net/polinux/qb346/4/ "Libellés des mois ")
 
 
