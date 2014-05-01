@@ -5,7 +5,9 @@
  * @Copyleft 2014
  * @date       31/01/2014
  * @version    0.1
- * @revision   $0$
+ * @revision   $1$
+ *
+ * @date revision   01/05/2014 : capitalize
  *
  * Quelques additions utiles en Javascript
  *
@@ -55,7 +57,6 @@ Date.toLocaleDateStringSupportsLocales = function () {
  * Répétion d'une chaine
  * 
  * @param {Number} nb : le nombre de répétition
- * 
  * @return {String} La chaine répètée 
  */
 String.prototype.repeat = String.prototype.repeat || function( nb ){
@@ -81,6 +82,16 @@ String.prototype.startsWith = String.prototype.startsWith || function(strStartsW
   return strStartsWith === this.substring(0, strStartsWith.length);
 };
 
+/**
+ * Capitalise une chaine
+ * @param  aucun
+ * @return {String}    La chaine avec totes les premières lettres en majuscule
+ * ne fonctionne que sur les chaines ascii
+ */
+String.prototype.capitalize = function () {
+    return this.toLowerCase().replace( /(^|\s)([a-z])/g, function(match) { return match.toUpperCase(); } );
+};
+  
 Number.prototype.toTimeString = function() {
 //                               -------------------
 	var timeString = "";
