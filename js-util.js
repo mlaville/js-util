@@ -64,11 +64,11 @@ String.prototype.repeat = String.prototype.repeat || function( nb ){
   return (nb > 0) ? this + this.repeat( nb - 1 ) : '' ;
 };
 String.prototype.rpad = String.prototype.lpad || function( str, lg ){
-//                              ----------
+//                              -------
   return (lg > 0) ? this.concat( str.repeat( lg ) ).slice( 0, lg ) : '' ;
 };
 String.prototype.lpad = String.prototype.lpad || function( str, lg ){
-//                              ----------
+//                              -------
   return (lg > 0) ? str.repeat( lg ).concat(this).slice( -lg ) : '' ;
 };
 
@@ -79,6 +79,7 @@ String.prototype.lpad = String.prototype.lpad || function( str, lg ){
  * @author Tomislav Capan
  */
 String.prototype.startsWith = String.prototype.startsWith || function(strStartsWith) {
+//                              ----------------
   return strStartsWith === this.substring(0, strStartsWith.length);
 };
 
@@ -89,6 +90,7 @@ String.prototype.startsWith = String.prototype.startsWith || function(strStartsW
  * ne fonctionne que sur les chaines ascii
  */
 String.prototype.capitalize = function () {
+//                              -----------------
     return this.toLowerCase().replace( /(^|\s)([a-z])/g, function(match) { return match.toUpperCase(); } );
 };
   
