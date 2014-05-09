@@ -4,10 +4,11 @@
  * @auteur     marc laville
  * @Copyleft 2014
  * @date       31/01/2014
- * @version    0.1
- * @revision   $1$
+ * @version    0.2
+ * @revision   $2$
  *
  * @date revision   01/05/2014 : capitalize
+ * @date revision   08/05/2014 : arrayRGB
  *
  * Quelques additions utiles en Javascript
  *
@@ -84,9 +85,26 @@ String.prototype.startsWith = String.prototype.startsWith || function(strStartsW
 };
 
 /**
+ *  "rgb(25, 20, 240) =>["25", "20", "240"]
+ * @param  none
+ * @return {Array}    tableau de 3 chaines ou null si le format n'est pas valide
+ */
+String.prototype.arrayRGB = function() {
+  var match = /rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/.exec(this);
+  
+  if( match ) 
+	match.shift();
+  
+  return match;
+};
+
+String.prototype.toIntArray = function() {
+    return this.match(/\d+/g).map(function(i) { return +i; });
+};
+/**
  * Capitalise une chaine
  * @param  aucun
- * @return {String}    La chaine avec totes les premières lettres en majuscule
+ * @return {String}    La chaine avec toutes les premières lettres en majuscule
  * ne fonctionne que sur les chaines ascii
  */
 String.prototype.capitalize = function () {
@@ -167,7 +185,7 @@ Date.dayNames = Date.dayNames || function( locales ) {
 		dateRef = new Date(),
         // Firefox don't support parametres, so we construct option to conform to Firefox format
         options = {weekday: "long", year: "numeric", month: "long", day: "numeric"},
-		lang = pxUtil.toLocaleDateStringSupportsLocales() ? locales || window.navigator.language : window.navigator.language,
+		lang = Date.toLocaleDateStringSupportsLocales()  ? (locales || window.navigator.language) : window.navigator.language,
 		indexDay = 0; // Day position in the String returned to toLocaleString 
 		
 	switch( (lang.split('-'))[0] ) {
