@@ -10,13 +10,15 @@ Extention des Objets Javascript
 * lpad
 * rpad
 * capitalize
+* arrayRGB
 
 **Number**
 * time string
 
 **Date**
-* monthNames<br>
+* Date.monthNames<br>
 Un [exemple](http://jsfiddle.net/polinux/qb346/4/ "Libellés des mois ")
+* Date.dayNames
 
 
 Gestion de la sélection
