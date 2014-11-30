@@ -36,15 +36,6 @@ pxUtil.select = function( inputElt ) { return inputElt.setSelectionRange(0, inpu
 pxUtil.selectOnClick = function( event ) { return pxUtil.select( event.currentTarget ); };
 //           --------------------
 
-Date.toLocaleDateStringSupportsLocales = function () {
-    try {
-        new Date().toLocaleDateString("i");
-    } catch (e) {
-        return e.name === "RangeError";
-    }
-    return false;
-}
-
 /*
  * Surcharge des objets Javascript
  */
@@ -98,6 +89,11 @@ String.prototype.arrayRGB = function() {
   return match;
 };
 
+/**
+ *  "25 1 -3"=>[25, 1, -3]
+ * @param  {string} une chaine de caractères
+ * @return {Array}    tableau d'entiers
+ */
 String.prototype.toIntArray = function() {
     return this.match(/\d+/g).map(function(i) { return +i; });
 };
@@ -113,7 +109,7 @@ String.prototype.capitalize = function () {
 };
   
 Number.prototype.toTimeString = function() {
-//                               -------------------
+//                                  ------------------
 	var timeString = "";
 	
 	if(this > 0){
@@ -126,6 +122,14 @@ Number.prototype.toTimeString = function() {
 	
 	return timeString;
 }
+
+Number.prototype.toVolumeString = function() {
+ //   $unit=array('b','kb','mb','gb','tb','pb');
+  //  return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
+	return ;
+}
+
+//                               -------------------
 /**
  * L'Objet Date support t'il la localisation ,
   * see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString#Example:_Checking_for_support_for_locales_and_options_arguments
@@ -157,11 +161,11 @@ Date.monthNames = Date.monthNames || function( locales, optMonth ) {
 		case 'bg' : ;
 		case 'en' : ;
 		case 'ko' : indexMonth = 1;
-			break ;
+			break;
 		case 'es' : ;
 		case 'pt' : ;
 		case 'sv' : indexMonth = 3;
-			break ;
+			break;
 		default : ;
 	}
 
