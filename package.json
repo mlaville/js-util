@@ -2,12 +2,12 @@
     "name":"js-util",
     "title":"utilitaires Javascript",
     "description":"utilitaires Javascript",
-    "version":"0.1.0",
+    "version":"0.2.0",
     "homepage":"https://github.com/mlaville/js-util",
     "author":{
         "name":"marc laville",
         "email":"marc laville@polinux.net",
-        "url":"http://www.polinux.fr"
+        "url":"http://polinux.fr"
     },
     "repository":{
         "type":"git",

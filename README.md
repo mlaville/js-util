@@ -9,11 +9,15 @@ Extention des Objets Javascript
 * repeat
 * lpad
 * rpad
+* startsWith
 * capitalize
 * arrayRGB
+* toIntArray
+* toElement
 
 **Number**
-* time string
+* toTimeString
+* toByteSizeString
 
 **Date**
 * Date.monthNames<br>

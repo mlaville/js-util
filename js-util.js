@@ -2,13 +2,14 @@
  * util.js
  * 
  * @auteur     marc laville
- * @Copyleft 2014
+ * @Copyleft 2014-2015
  * @date       31/01/2014
  * @version    0.2
  * @revision   $2$
  *
  * @date revision   01/05/2014 : capitalize
  * @date revision   08/05/2014 : arrayRGB
+ * @date revision   03/04/2015: toElement, toTimeString, toByteSizeString
  *
  * Quelques additions utiles en Javascript
  *
@@ -81,6 +82,7 @@ String.prototype.startsWith = String.prototype.startsWith || function(strStartsW
  * @return {Array}    tableau de 3 chaines ou null si le format n'est pas valide
  */
 String.prototype.arrayRGB = function() {
+//                              --------------
   var match = /rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/.exec(this);
   
   if( match ) 
@@ -91,12 +93,31 @@ String.prototype.arrayRGB = function() {
 
 /**
  *  "25 1 -3"=>[25, 1, -3]
- * @param  {string} une chaine de caractères
+ * @param  none
  * @return {Array}    tableau d'entiers
  */
 String.prototype.toIntArray = function() {
+//                              ----------------
     return this.match(/\d+/g).map(function(i) { return +i; });
 };
+/**
+ *
+ * Creates and returns element from html string
+ * Uses innerHTML to create an element
+ *  
+ * @param  aucun
+ * @return {element}  
+ */
+String.prototype.toElement = function() {
+//                              ----------------
+    var div = document.createElement('div');
+
+	div.innerHTML = this;
+	
+	return div.removeChild(div.firstChild);
+};
+
+
 /**
  * Capitalise une chaine
  * @param  aucun
@@ -108,28 +129,34 @@ String.prototype.capitalize = function () {
     return this.toLowerCase().replace( /(^|\s)([a-z])/g, function(match) { return match.toUpperCase(); } );
 };
   
+/**
+ * Convertit un nombre de seconde en chaine hh:mm:ss
+ * @param  aucun
+ * @return {String}    La chaine "hh:mm:ss"
+ */
 Number.prototype.toTimeString = function() {
-//                                  ------------------
-	var timeString = "";
-	
-	if(this > 0){
-		var s = this % 60,
-			m = (( this - s ) / 60) % 60,
-			h = ( this - ( 60 * m ) - s ) / 3600;
-    timeString = "" + h + ":" + ("0" + m).slice(-2) + ":" + ("0" + s).slice(-2);
-//		ret = "" + h + "h" + ("0" + m).slice(-2);
-	}
-	
-	return timeString;
-}
+//                              --------------------
+	var hh = Math.floor(this / 3600),
+		mm = Math.floor((this - (hh * 3600)) / 60),
+		ss = this - (hh * 3600) - (mm * 60),
+		lpad0 = function(n) { return ("0" + n).slice(-2) };
 
-Number.prototype.toVolumeString = function() {
- //   $unit=array('b','kb','mb','gb','tb','pb');
-  //  return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
-	return ;
-}
+	return [hh, mm, ss].map( lpad0 ).join(':');
+};
 
-//                               -------------------
+/**
+ * Convertit un nombre en taille en Byte, Kb, Mb ....
+ * @param  {Number} precision   nombre de décimales (1 par défaut)
+ * @return {String}    La chaine de type '1.5 Mb'
+ */
+Number.prototype.toByteSizeString = function(precision) {
+//                              --------------------------
+    var sizes = ['Bytes', 'KB', 'MB', 'GB'],
+		i = (this > 0) ? parseInt( Math.floor(Math.log(this) / Math.log(1024)) ) : null;
+
+	return (i == null) ? 'n/a' : [ (this / Math.pow(1024, i)).toFixed( precision || 1 ), sizes[i] ].join(' ');
+};
+
 /**
  * L'Objet Date support t'il la localisation ,
   * see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString#Example:_Checking_for_support_for_locales_and_options_arguments
