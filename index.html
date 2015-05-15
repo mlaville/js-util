@@ -33,22 +33,29 @@ test-polinux
 <br>
 <nav>
 	<ul>
+	<li><a href="#">sq</a></li>
 	<li><a href="#">bg</a></li>
 	<li><a href="#">de</a></li>
+	<li><a href="#">da</a></li>
 	<li><a href="#">el</a></li>
 	<li><a href="#">en</a></li>
 	<li><a href="#">es</a></li>
 	<li><a href="#">fi</a></li>
 	<li><a href="#">fr</a></li>
 	<li><a href="#">it</a></li>
+	<li><a href="#">is</a></li>
+	<li><a href="#">mk</a></li>
 	<li><a href="#">ko</a></li>
 	<li><a href="#">pt</a></li>
 	<li><a href="#">nl</a></li>
 	<li><a href="#">ro</a></li>
+	<li><a href="#">ru</a></li>
 	<li><a href="#">sv</a></li>
 	</ul>
 </nav>
 
+<h3>Aujourd'hui</h3>
+<div id='today'></div>
 <h3>Jours</h3>
 <div id='jour'></div>
 <h3>Mois</h3>
@@ -65,7 +72,14 @@ test-polinux
 	var countryLinks = document.querySelectorAll('nav a');
 	for( i = countryLinks.length ; i > 0 ; i-- ) {
 		eltA = countryLinks[i-1].addEventListener( 'click', function( e ) {
-			var lang = e.target.textContent;
+			var locales = e.target.textContent,
+				dateRef = new Date(),
+				// Firefox don't support parametres, so we construct option to conform to Firefox format
+				options = {weekday: "long", year: "numeric", month: "long", day: "numeric"},
+				lang = Date.toLocaleDateStringSupportsLocales()  ? (locales || window.navigator.language) : window.navigator.language;
+			
+			
+			document.getElementById('today').innerHTML = dateRef.toLocaleString( lang, options);
 			document.getElementById('jour').innerHTML = '<ul><li>' + Date.dayNames( lang ).join('</li><li>') + '</ul></li>';
 			document.getElementById('mois').innerHTML = '<ul><li>' + Date.monthNames( lang ).join('</li><li>') + '</ul></li>';
 		});

@@ -1,5 +1,5 @@
 /**
- * util.js
+ * js-util.js
  * 
  * @auteur     marc laville
  * @Copyleft 2014-2015
@@ -10,6 +10,7 @@
  * @date revision   01/05/2014 : capitalize
  * @date revision   08/05/2014 : arrayRGB
  * @date revision   03/04/2015: toElement, toTimeString, toByteSizeString
+ * @date revision   16/05/2015: render (templating)
  *
  * Quelques additions utiles en Javascript
  *
@@ -109,7 +110,7 @@ String.prototype.toIntArray = function() {
  * @return {element}  
  */
 String.prototype.toElement = function() {
-//                              ----------------
+//                                 --------------
     var div = document.createElement('div');
 
 	div.innerHTML = this;
@@ -128,7 +129,18 @@ String.prototype.capitalize = function () {
 //                              -----------------
     return this.toLowerCase().replace( /(^|\s)([a-z])/g, function(match) { return match.toUpperCase(); } );
 };
-  
+
+/**
+ * Utilise la chaîme comme template
+ * @param  data
+ * @return {String}    La chaine avec toutes les premières lettres en majuscule
+ */
+String.prototype.render = function(data) {
+    return this.replace(/{{(.+?)}}/g, function (m, p1) {
+        return data[p1]
+    })
+}
+
 /**
  * Convertit un nombre de seconde en chaine hh:mm:ss
  * @param  aucun
@@ -184,6 +196,7 @@ Date.monthNames = Date.monthNames || function( locales, optMonth ) {
 	var arrMonth = [],
 		lang = Date.toLocaleDateStringSupportsLocales()  ? (locales || window.navigator.language) : window.navigator.language,
 		indexMonth = 2; // Month position in the String returned to toLocaleString 
+		
 	switch( (lang.split('-'))[0] ) {
 		case 'bg' : ;
 		case 'en' : ;
@@ -216,11 +229,13 @@ Date.dayNames = Date.dayNames || function( locales ) {
 		dateRef = new Date(),
         // Firefox don't support parametres, so we construct option to conform to Firefox format
         options = {weekday: "long", year: "numeric", month: "long", day: "numeric"},
-		lang = Date.toLocaleDateStringSupportsLocales()  ? (locales || window.navigator.language) : window.navigator.language,
+		lang = Date.toLocaleDateStringSupportsLocales() ? (locales || window.navigator.language) : window.navigator.language,
 		indexDay = 0; // Day position in the String returned to toLocaleString 
 		
 	switch( (lang.split('-'))[0] ) {
-		case 'bg' : ;
+//		case 'bg' : ;
+		case 'sq' : indexDay = 1;
+			break ;
 		case 'ko' : indexDay = 3;
 			break ;
 		default : 
