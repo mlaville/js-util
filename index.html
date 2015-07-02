@@ -23,6 +23,11 @@
 		text-align:center;
 		background-color:#E0E0E0;
 }
+#div1 {
+	width: 72px;
+	height: 72px;
+	background-color:#E0E0E0;
+}
 
 	</style>
 	<script type="text/javascript" src="./js-util.js"></script>
@@ -66,10 +71,15 @@ test-polinux
 <output name='outStrl' type='text' value='xxxx' >???</output>
 <output name='outStrr' type='text' value='xxxx' >???</output>
 </form>
+<hr />
+<div id="div1" >Drag Me !</div>
+
 <script>
+	var countryLinks = document.querySelectorAll('nav a');
+	
 	document.getElementById('jour').innerHTML = '<ul><li>' + Date.dayNames( ).join('</li><li>') + '</ul></li>';
 	document.getElementById('mois').innerHTML = '<ul><li>' + Date.monthNames( ).join('</li><li>') + '</ul></li>';
-	var countryLinks = document.querySelectorAll('nav a');
+	
 	for( i = countryLinks.length ; i > 0 ; i-- ) {
 		eltA = countryLinks[i-1].addEventListener( 'click', function( e ) {
 			var locales = e.target.textContent,
@@ -98,6 +108,9 @@ formTest.initStr.addEventListener( 'input', function( event ) {
 	
 	return;
 });
+</script>
+<script>
+pxUtil.draggable(document.getElementById('div1'));
 </script>
 </body>
 </html>

@@ -1,16 +1,17 @@
 /**
  * js-util.js
  * 
- * @auteur     marc laville
+ * @auteur     marc laville - polinux
  * @Copyleft 2014-2015
  * @date       31/01/2014
- * @version    0.2
- * @revision   $2$
+ * @version    0.3
+ * @revision   $5$
  *
- * @date revision   01/05/2014 : capitalize
- * @date revision   08/05/2014 : arrayRGB
- * @date revision   03/04/2015: toElement, toTimeString, toByteSizeString
- * @date revision   16/05/2015: render (templating)
+ * @date revision   marc laville : 01/05/2014 : capitalize
+ * @date revision   marc laville : 08/05/2014 : arrayRGB
+ * @date revision   marc laville : 03/04/2015: toElement, toTimeString, toByteSizeString
+ * @date revision   marc laville : 16/05/2015: render (templating)
+ * @date revision   marc laville : 01/07/2015: pxUtil.draggable (dragging)
  *
  * Quelques additions utiles en Javascript
  *
@@ -24,7 +25,6 @@
   */
 var pxUtil = { };
 
-
 /**
  * Gère la sélection d'un element input
  * 
@@ -34,6 +34,42 @@ var pxUtil = { };
  */
 pxUtil.select = function( inputElt ) { return inputElt.setSelectionRange(0, inputElt.value.length); }
 
+// Selection d'un champ sur un click
+pxUtil.selectOnClick = function( event ) { return pxUtil.select( event.currentTarget ); };
+//           --------------------
+
+pxUtil.draggable = function( node ) {
+
+	var onEvtDragStart = function( event ) {
+
+		event.dataTransfer.setData( 'position', JSON.stringify( { x: event.screenX, y: event.screenY } ) );
+		event.dataTransfer.effectAllowed = 'move';
+		// make it half transparent
+		node.style.opacity = .6;
+		node.style.top = [ node.style.top || event.screenY - window.scrollY, 'px' ].join('');
+
+		return;
+	},
+	onEvtDragEnd  = function( event ) {
+		var jsonData = event.dataTransfer.getData('position'),
+			data = JSON.parse(jsonData),
+			eltStyle = node.style;
+
+		eltStyle.left = [ event.screenX - data.x + parseInt( '0' + eltStyle.left ), 'px' ].join('');
+		eltStyle.top = [ event.screenY - data.y + parseInt( '0' + eltStyle.top ), 'px' ].join('');
+
+		eltStyle.opacity = 1;
+
+    return;
+	};
+	
+	node.style.position = 'absolute';
+	node.setAttribute( 'draggable', 'true' );
+	node.addEventListener( 'dragstart', onEvtDragStart, false );
+	node.addEventListener( 'dragend', onEvtDragEnd, false );
+
+	return
+}
 // Selection d'un champ sur un click
 pxUtil.selectOnClick = function( event ) { return pxUtil.select( event.currentTarget ); };
 //           --------------------
@@ -110,7 +146,7 @@ String.prototype.toIntArray = function() {
  * @return {element}  
  */
 String.prototype.toElement = function() {
-//                                 --------------
+//                               --------------
     var div = document.createElement('div');
 
 	div.innerHTML = this;
@@ -163,10 +199,10 @@ Number.prototype.toTimeString = function() {
  */
 Number.prototype.toByteSizeString = function(precision) {
 //                              --------------------------
-    var sizes = ['Bytes', 'KB', 'MB', 'GB'],
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'],
 		i = (this > 0) ? parseInt( Math.floor(Math.log(this) / Math.log(1024)) ) : null;
 
-	return (i == null) ? 'n/a' : [ (this / Math.pow(1024, i)).toFixed( precision || 1 ), sizes[i] ].join(' ');
+	return (i == null) ? 'n/a' : [ (this / Math.pow(1024, i)).toFixed( precision || 2 ), sizes[i] ].join(' ');
 };
 
 /**
