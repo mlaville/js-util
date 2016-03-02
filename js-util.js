@@ -12,6 +12,7 @@
  * @date revision   marc laville : 03/04/2015: toElement, toTimeString, toByteSizeString
  * @date revision   marc laville : 16/05/2015: render (templating)
  * @date revision   marc laville : 01/07/2015: pxUtil.draggable (dragging)
+ * @date revision   marc laville : 02/03/2016: supprime repeat et startsWith ; utilise 'use strict'
  *
  * Quelques additions utiles en Javascript
  *
@@ -20,6 +21,8 @@
  *   http://www.opensource.org/licenses/mit-license.php
  */
 
+	'use strict';
+	
 /*
   * Espace de nommage
   */
@@ -35,44 +38,42 @@ var pxUtil = { };
 pxUtil.select = function( inputElt ) { return inputElt.setSelectionRange(0, inputElt.value.length); }
 
 // Selection d'un champ sur un click
-pxUtil.selectOnClick = function( event ) { return pxUtil.select( event.currentTarget ); };
-//           --------------------
+//pxUtil.selectOnClick = function( event ) { return pxUtil.select( event.currentTarget ); };
+pxUtil.selectOnClick = function( event ) { return event.currentTarget.select(); };
+//     -------------
 
-pxUtil.draggable = function( node ) {
+pxUtil.draggable = function( elmt ) {
 
 	var onEvtDragStart = function( event ) {
 
 		event.dataTransfer.setData( 'position', JSON.stringify( { x: event.screenX, y: event.screenY } ) );
 		event.dataTransfer.effectAllowed = 'move';
 		// make it half transparent
-		node.style.opacity = .6;
-		node.style.top = [ node.style.top || event.screenY - window.scrollY, 'px' ].join('');
+		elmt.style.opacity = .6;
+		elmt.style.top = [ elmt.style.top || event.screenY - window.scrollY, 'px' ].join('');
 
 		return;
 	},
 	onEvtDragEnd  = function( event ) {
 		var jsonData = event.dataTransfer.getData('position'),
 			data = JSON.parse(jsonData),
-			eltStyle = node.style;
+			eltStyle = elmt.style;
 
 		eltStyle.left = [ event.screenX - data.x + parseInt( '0' + eltStyle.left ), 'px' ].join('');
 		eltStyle.top = [ event.screenY - data.y + parseInt( '0' + eltStyle.top ), 'px' ].join('');
 
 		eltStyle.opacity = 1;
 
-    return;
+		return;
 	};
 	
-	node.style.position = 'absolute';
-	node.setAttribute( 'draggable', 'true' );
-	node.addEventListener( 'dragstart', onEvtDragStart, false );
-	node.addEventListener( 'dragend', onEvtDragEnd, false );
+	elmt.style.position = 'absolute';
+	elmt.setAttribute( 'draggable', 'true' );
+	elmt.addEventListener( 'dragstart', onEvtDragStart, false );
+	elmt.addEventListener( 'dragend', onEvtDragEnd, false );
 
 	return
 }
-// Selection d'un champ sur un click
-pxUtil.selectOnClick = function( event ) { return pxUtil.select( event.currentTarget ); };
-//           --------------------
 
 /*
  * Surcharge des objets Javascript
@@ -88,12 +89,21 @@ pxUtil.selectOnClick = function( event ) { return pxUtil.select( event.currentTa
  * 
  * @param {Number} nb : le nombre de répétition
  * @return {String} La chaine répètée 
- */
+
 String.prototype.repeat = String.prototype.repeat || function( nb ){
 //                              ----------
   return (nb > 0) ? this + this.repeat( nb - 1 ) : '' ;
 };
-String.prototype.rpad = String.prototype.lpad || function( str, lg ){
+ */
+
+/**
+ * Répétion d'une chaine
+ * 
+ * @param {Number} lg : la longueur de la chaine obtenue
+ * @param {String} str : la chaine utiliser pour complèter la chaine initiale
+ * @return {String} La chaine répètée 
+ */
+String.prototype.rpad = String.prototype.rpad || function( str, lg ){
 //                              -------
   return (lg > 0) ? this.concat( str.repeat( lg ) ).slice( 0, lg ) : '' ;
 };
@@ -102,17 +112,38 @@ String.prototype.lpad = String.prototype.lpad || function( str, lg ){
   return (lg > 0) ? str.repeat( lg ).concat(this).slice( -lg ) : '' ;
 };
 
+String.prototype.camelcase = function() {
+
+	if (this.length === 1 || !(/[_.\- ]+/).test(this) ) {
+		if (this[0] === this[0].toLowerCase() && this.slice(1) !== this.slice(1).toLowerCase()) {
+			return this;
+		}
+
+		return this.toLowerCase();
+	}
+
+	return this
+		.replace(/^[_.\- ]+/, '')
+		.toLowerCase()
+		.replace(/[_.\- ]+(\w|$)/g, function (m, p1) {
+			return p1.toUpperCase();
+		});
+}
+
+String.prototype.decamelcase = function(sep) {
+	return this.replace(/([a-z\d])([A-Z])/g, '$1' + (sep || '_') + '$2').toLowerCase();
+};
 /**
  * Checks if the string starts with the given substring
  * @param  {String} strStartsWith   Substring to check starting with
  * @return {Boolean}    true if string starts with the given substring, false otherwise
  * @author Tomislav Capan
- */
+
 String.prototype.startsWith = String.prototype.startsWith || function(strStartsWith) {
 //                              ----------------
   return strStartsWith === this.substring(0, strStartsWith.length);
 };
-
+ */
 /**
  *  "rgb(25, 20, 240) =>["25", "20", "240"]
  * @param  none
@@ -169,7 +200,7 @@ String.prototype.capitalize = function () {
 /**
  * Utilise la chaîme comme template
  * @param  data
- * @return {String}    La chaine avec toutes les premières lettres en majuscule
+ * @return {String}    
  */
 String.prototype.render = function(data) {
     return this.replace(/{{(.+?)}}/g, function (m, p1) {
@@ -205,6 +236,16 @@ Number.prototype.toByteSizeString = function(precision) {
 	return (i == null) ? 'n/a' : [ (this / Math.pow(1024, i)).toFixed( precision || 2 ), sizes[i] ].join(' ');
 };
 
+Date.fromISO = function(str) { // 2015-08-14T19:14:24.957
+  var dateTime = ( str.split('.')[0] ).split('T'),
+      datePart = dateTime[0].split('-'),
+      timePart = dateTime[1].split(':');
+  
+  return new Date( datePart[0], datePart[1] - 1, datePart[2], timePart[0], timePart[1], timePart[2] );  
+}
+Date.prototype.diff = function(otherDate) {
+  return ( otherDate || new Date() ).getTime() - this.getTime();
+}
 /**
  * L'Objet Date support t'il la localisation ,
   * see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString#Example:_Checking_for_support_for_locales_and_options_arguments
@@ -227,6 +268,26 @@ Date.toLocaleDateStringSupportsLocales = function () {
  * @return {Array}   month name array
  * @author marc laville
  */
+//Date.monthNames = Date.monthNames || function( lang ) {
+Date.monthNames = Date.monthNames || function( locales, optMonth ) {
+	var arrMonth = [],
+		dateRef = new Date(),
+		year = dateRef.getFullYear(),
+        optMonth = optMonth || { month: "long" };
+    
+    locales = locales || 'fr-FR';
+
+	dateRef.setMonth(0);
+	dateRef.setDate(11); // Eviter la fin de mois !!!
+	while (year == dateRef.getFullYear()) {
+		/* push le mois en lettre et passe au mois suivant */
+		arrMonth.push( dateRef.toLocaleString(locales, optMonth) );
+		dateRef.setMonth( dateRef.getMonth() + 1);
+	}
+	
+	return arrMonth;
+}
+/*
 Date.monthNames = Date.monthNames || function( locales, optMonth ) {
 //       ---------------
 	var arrMonth = [],
@@ -254,7 +315,7 @@ Date.monthNames = Date.monthNames || function( locales, optMonth ) {
 	
 	return arrMonth;
 }
-
+*/
 /*
  * L'Objet Date sait revoyer la liste des noms de jour
  * locales n'est pas supporté par FireFox
@@ -264,7 +325,8 @@ Date.dayNames = Date.dayNames || function( locales ) {
 	var arrDay = [],
 		dateRef = new Date(),
         // Firefox don't support parametres, so we construct option to conform to Firefox format
-        options = {weekday: "long", year: "numeric", month: "long", day: "numeric"},
+ //       options = {weekday: "long", year: "numeric", month: "long", day: "numeric"},
+        options = {weekday: "long"},
 		lang = Date.toLocaleDateStringSupportsLocales() ? (locales || window.navigator.language) : window.navigator.language,
 		indexDay = 0; // Day position in the String returned to toLocaleString 
 		
@@ -289,10 +351,22 @@ Date.dayNames = Date.dayNames || function( locales ) {
 
 /**
  * Calcul le jour de Paques
+ c = y / 100
+    n = y - 19 * ( y / 19 )
+    k = ( c - 17 ) / 25
+    i = c - c / 4 - ( c - k ) / 3 + 19 * n + 15
+    i = i - 30 * ( i / 30 )
+    i = i - ( i / 28 ) * ( 1 - ( i / 28 ) * ( 29 / ( i + 1 ) ) * ( ( 21 - n ) / 11 ) )
+    j = y + y / 4 + i + 2 - c + c / 4
+    j = j - 7 * ( j / 7 )
+    l = i - j
+    m = 3 + ( l + 40 ) / 44
+    d = l + 28 - 31 * ( m / 4 )
+
  */
 Date.easterDay = function( annee ) {
-    var C = Math.floor(annee/100);
-    var N = annee - 19*Math.floor(annee/19);
+    var C = Math.floor(annee/100), // Siecle
+		N = annee - 19*Math.floor(annee/19);
     var K = Math.floor((C - 17)/25);
     var I = C - Math.floor(C/4) - Math.floor((C - K)/3) + 19*N + 15;
     I = I - 30*Math.floor((I/30));
