@@ -2,17 +2,18 @@
  * js-util.js
  * 
  * @auteur     marc laville - polinux
- * @Copyleft 2014-2015
+ * @Copyleft 2014-2016
  * @date       31/01/2014
- * @version    0.3
- * @revision   $5$
+ * @version    0.4
+ * @revision   $6$
  *
  * @date revision   marc laville : 01/05/2014 : capitalize
  * @date revision   marc laville : 08/05/2014 : arrayRGB
  * @date revision   marc laville : 03/04/2015: toElement, toTimeString, toByteSizeString
  * @date revision   marc laville : 16/05/2015: render (templating)
  * @date revision   marc laville : 01/07/2015: pxUtil.draggable (dragging)
- * @date revision   marc laville : 02/03/2016: supprime repeat et startsWith ; utilise 'use strict'
+ * @date revision   marc laville : 12/03/2016: Date.prototype.estFerie
+ * @date revision   marc laville : 04/09/2016: String.prototype.parseSearch
  *
  * Quelques additions utiles en Javascript
  *
@@ -21,8 +22,6 @@
  *   http://www.opensource.org/licenses/mit-license.php
  */
 
-	'use strict';
-	
 /*
   * Espace de nommage
   */
@@ -38,8 +37,7 @@ var pxUtil = { };
 pxUtil.select = function( inputElt ) { return inputElt.setSelectionRange(0, inputElt.value.length); }
 
 // Selection d'un champ sur un click
-//pxUtil.selectOnClick = function( event ) { return pxUtil.select( event.currentTarget ); };
-pxUtil.selectOnClick = function( event ) { return event.currentTarget.select(); };
+pxUtil.selectOnClick = function( event ) { return pxUtil.select( event.currentTarget ); };
 //     -------------
 
 pxUtil.draggable = function( elmt ) {
@@ -75,6 +73,7 @@ pxUtil.draggable = function( elmt ) {
 	return
 }
 
+
 /*
  * Surcharge des objets Javascript
  */
@@ -89,15 +88,15 @@ pxUtil.draggable = function( elmt ) {
  * 
  * @param {Number} nb : le nombre de répétition
  * @return {String} La chaine répètée 
-
 String.prototype.repeat = String.prototype.repeat || function( nb ){
 //                              ----------
   return (nb > 0) ? this + this.repeat( nb - 1 ) : '' ;
 };
  */
 
+
 /**
- * Répétion d'une chaine
+ * Completion d'une chaine
  * 
  * @param {Number} lg : la longueur de la chaine obtenue
  * @param {String} str : la chaine utiliser pour complèter la chaine initiale
@@ -165,9 +164,40 @@ String.prototype.arrayRGB = function() {
  * @return {Array}    tableau d'entiers
  */
 String.prototype.toIntArray = function() {
-//                              ----------------
+//              -----------
     return this.match(/\d+/g).map(function(i) { return +i; });
 };
+
+/**
+ *  "?a=1&b=21&d&f=1245"=>{"?a":"1","b":"21","d":"undefined","f":"1245"}
+ * @param  none
+ * @return {Object}    tableau d'entiers
+ */
+String.prototype.parseSearch = function() {
+//               -----------
+    var mappage = function(query, item) {
+         var bit = item.split('='),
+             first = decodeURIComponent(bit[0]),
+			 second;
+        
+          if (first.length > 0) {
+            second = decodeURIComponent(bit[1]);
+            if (typeof query[first] == "undefined"){
+              query[first] = second;
+            } else {
+              if (query[first] instanceof Array)
+                query[first].push(second);
+              else
+                query[first] = [query[first], second];
+            }
+          }
+		  
+		  return query;
+      };
+
+  return this.split("?").pop().split("&").reduce( mappage, {} );
+};
+
 /**
  *
  * Creates and returns element from html string
@@ -177,7 +207,7 @@ String.prototype.toIntArray = function() {
  * @return {element}  
  */
 String.prototype.toElement = function() {
-//                               --------------
+//               ---------
     var div = document.createElement('div');
 
 	div.innerHTML = this;
@@ -218,7 +248,7 @@ Number.prototype.toTimeString = function() {
 	var hh = Math.floor(this / 3600),
 		mm = Math.floor((this - (hh * 3600)) / 60),
 		ss = this - (hh * 3600) - (mm * 60),
-		lpad0 = function(n) { return ("0" + n).slice(-2) };
+		lpad0 = function(n) { return ('0' + n).slice(-2) };
 
 	return [hh, mm, ss].map( lpad0 ).join(':');
 };
@@ -243,6 +273,7 @@ Date.fromISO = function(str) { // 2015-08-14T19:14:24.957
   
   return new Date( datePart[0], datePart[1] - 1, datePart[2], timePart[0], timePart[1], timePart[2] );  
 }
+
 Date.prototype.diff = function(otherDate) {
   return ( otherDate || new Date() ).getTime() - this.getTime();
 }
@@ -378,4 +409,20 @@ Date.easterDay = function( annee ) {
     var D = L + 28 - 31*Math.floor(M/4);
 
     return new Date( annee, M - 1 , D );
+}
+
+
+Date.prototype.estFerie = function() {
+	'use strict';
+	var jourMois = [ this.getMonth(), this.getDate() ],
+      egalJourMois = arr => arr[0] == jourMois[0] && arr[1] == jourMois[1],
+	  estPaqAscPent = function( dtPaques ) {
+          return [1, 38, 11].some(function(i){
+            dtPaques.setDate(dtPaques.getDate() + i);
+            
+            return egalJourMois( [dtPaques.getMonth(), dtPaques.getDate()] );
+          });
+      };
+	return [[0, 1], [4, 1], [4, 8], [6, 14], [7,15], [10, 1], [10, 11], [11,25]].some(egalJourMois)
+    || estPaqAscPent( Date.easterDay( this.getFullYear() ) );
 }
