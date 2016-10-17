@@ -14,6 +14,7 @@
  * @date revision   marc laville : 01/07/2015: pxUtil.draggable (dragging)
  * @date revision   marc laville : 12/03/2016: Date.prototype.estFerie
  * @date revision   marc laville : 04/09/2016: String.prototype.parseSearch
+ * @date revision   marc laville : 16/10/2016: String.prototype.padStart
  *
  * Quelques additions utiles en Javascript
  *
@@ -94,7 +95,20 @@ String.prototype.repeat = String.prototype.repeat || function( nb ){
 };
  */
 
+/**
+ * Polyfill padStart et padEnd
+ */
+String.prototype.padStart = String.prototype.padStart || function (max, fillString) {
+  const masked = max - this.length;
+  
+  return ( 0 > masked ? '' : String(fillString || ' ').repeat(masked).slice(0, masked) ) + this;
+};
 
+String.prototype.padEnd = String.prototype.padEnd || function (max, fillString) {
+  const masked = max - this.length;
+  
+  return this.concat( ( 0 > masked ) ? '' : String(fillString || ' ').repeat(masked).slice(0, masked) );
+};
 /**
  * Completion d'une chaine
  * 
@@ -103,13 +117,15 @@ String.prototype.repeat = String.prototype.repeat || function( nb ){
  * @return {String} La chaine répètée 
  */
 String.prototype.rpad = String.prototype.rpad || function( str, lg ){
-//                              -------
-  return (lg > 0) ? this.concat( str.repeat( lg ) ).slice( 0, lg ) : '' ;
+//               ----
+  return  this.padEnd( lg, str );
 };
+
 String.prototype.lpad = String.prototype.lpad || function( str, lg ){
-//                              -------
-  return (lg > 0) ? str.repeat( lg ).concat(this).slice( -lg ) : '' ;
+//               ----
+  return  this.padStart( lg, str );
 };
+
 
 String.prototype.camelcase = function() {
 
