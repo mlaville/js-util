@@ -95,6 +95,26 @@ String.prototype.repeat = String.prototype.repeat || function( nb ){
 };
  */
 
+   var latin_map = {
+     "Á":"A", "Â":"A", "Ä":"A",
+     "Æ":"AE","Ǽ":"AE",
+     "Ç":"C",
+     "É":"E","Ë":"E","È":"E","Ê":"E",
+     "Í":"I","Î":"I","Ï":"I","Ì":"I",
+     "Ó":"O","Ô":"O","Ö":"O","Ò":"O",
+     "Œ":"OE",
+     "Ú":"U","Û":"U","Ǘ":"U","Ù":"U",
+     "á":"a","à":"a","â":"a","ä":"a","æ":"ae","ǽ":"ae",
+     "ç":"c",
+     "é":"e","ê":"e","è":"e","ë":"e",
+     "í":"i","î":"i","ï":"i",
+     "ó":"o","ô":"o","ö":"o","ờ":"o", "œ":"oe",
+     "ù":"u","û":"u","ü":"u",
+     };
+     
+String.prototype.latinize = function() {
+  return this.replace(/[^A-Za-z0-9\[\] ]/g, function(x) { return latin_map[x] || x; });
+},
 /**
  * Polyfill padStart et padEnd
  */
@@ -160,7 +180,7 @@ String.prototype.startsWith = String.prototype.startsWith || function(strStartsW
 };
  */
 /**
- *  "rgb(25, 20, 240) =>["25", "20", "240"]
+ *  "rgb(25, 20, 240)" =>["25", "20", "240"]
  * @param  none
  * @return {Array}    tableau de 3 chaines ou null si le format n'est pas valide
  */
@@ -169,7 +189,7 @@ String.prototype.arrayRGB = function() {
   var match = /rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/.exec(this);
   
   if( match ) 
-	match.shift();
+    match.shift();
   
   return match;
 };
@@ -193,8 +213,8 @@ String.prototype.parseSearch = function() {
 //               -----------
     var mappage = function(query, item) {
          var bit = item.split('='),
-             first = decodeURIComponent(bit[0]),
-			 second;
+          first = decodeURIComponent(bit[0]),
+          second;
         
           if (first.length > 0) {
             second = decodeURIComponent(bit[1]);
@@ -209,11 +229,36 @@ String.prototype.parseSearch = function() {
           }
 		  
 		  return query;
-      };
+    };
 
   return this.split("?").pop().split("&").reduce( mappage, {} );
 };
+/**
+ *https://gist.github.com/DiegoSalazar/4075533
+ * takes the form field value and returns true on valid number
+ */
+function valid_credit_card(value) {
+  // accept only digits, dashes or spaces
+	if (/[^0-9-\s]+/.test(value)) return false;
 
+	// The Luhn Algorithm. It's so pretty.
+	var nCheck = 0, nDigit = 0, bEven = false;
+	value = value.replace(/\D/g, "");
+
+	for (var n = value.length - 1; n >= 0; n--) {
+		var cDigit = value.charAt(n),
+			  nDigit = parseInt(cDigit, 10);
+
+		if (bEven) {
+			if ((nDigit *= 2) > 9) nDigit -= 9;
+		}
+
+		nCheck += nDigit;
+		bEven = !bEven;
+	}
+
+	return (nCheck % 10) == 0;
+}
 /**
  *
  * Creates and returns element from html string
@@ -239,7 +284,7 @@ String.prototype.toElement = function() {
  * ne fonctionne que sur les chaines ascii
  */
 String.prototype.capitalize = function () {
-//                              -----------------
+//               ----------
     return this.toLowerCase().replace( /(^|\s)([a-z])/g, function(match) { return match.toUpperCase(); } );
 };
 
@@ -277,11 +322,14 @@ Number.prototype.toTimeString = function() {
 Number.prototype.toByteSizeString = function(precision) {
 //                              --------------------------
     var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'],
-		i = (this > 0) ? parseInt( Math.floor(Math.log(this) / Math.log(1024)) ) : null;
+      i = (this >= 0) ? parseInt( Math.floor(Math.log(this) / Math.log(1024)) ) : null;
 
 	return (i == null) ? 'n/a' : [ (this / Math.pow(1024, i)).toFixed( precision || 2 ), sizes[i] ].join(' ');
 };
 
+/**
+ *
+ */
 Date.fromISO = function(str) { // 2015-08-14T19:14:24.957
   var dateTime = ( str.split('.')[0] ).split('T'),
       datePart = dateTime[0].split('-'),
@@ -293,6 +341,12 @@ Date.fromISO = function(str) { // 2015-08-14T19:14:24.957
 Date.prototype.diff = function(otherDate) {
   return ( otherDate || new Date() ).getTime() - this.getTime();
 }
+
+Date.prototype.getQuater = function() {
+//             ---------
+    return Math.trunc( ( this.getMonth() + 1 ) / 4 ) + 1;
+};
+
 /**
  * L'Objet Date support t'il la localisation ,
   * see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString#Example:_Checking_for_support_for_locales_and_options_arguments
@@ -431,7 +485,9 @@ Date.easterDay = function( annee ) {
 Date.prototype.estFerie = function() {
 	'use strict';
 	var jourMois = [ this.getMonth(), this.getDate() ],
-      egalJourMois = arr => arr[0] == jourMois[0] && arr[1] == jourMois[1],
+      egalJourMois = function(arr) {
+        return arr[0] == jourMois[0] && arr[1] == jourMois[1];
+      },
 	  estPaqAscPent = function( dtPaques ) {
           return [1, 38, 11].some(function(i){
             dtPaques.setDate(dtPaques.getDate() + i);
@@ -442,3 +498,17 @@ Date.prototype.estFerie = function() {
 	return [[0, 1], [4, 1], [4, 8], [6, 14], [7,15], [10, 1], [10, 11], [11,25]].some(egalJourMois)
     || estPaqAscPent( Date.easterDay( this.getFullYear() ) );
 }
+/*
+Array.from = Array.from || function( nodeList ) {
+  var tabFrom = [],
+    long = nodeList.length,
+    i = 0;
+    
+  while( i < long ) {
+    tabFrom.push(nodeList[i]);
+    i++;
+  }
+  
+  return tabFrom;
+}
+*/
