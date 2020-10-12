@@ -2,7 +2,7 @@
  * js-util.js
  * 
  * @auteur     marc laville - polinux
- * @Copyleft 2014-2016
+ * @Copyleft 2014-2020
  * @date       31/01/2014
  * @version    0.4
  * @revision   $6$
@@ -15,6 +15,7 @@
  * @date revision   marc laville : 12/03/2016: Date.prototype.estFerie
  * @date revision   marc laville : 04/09/2016: String.prototype.parseSearch
  * @date revision   marc laville : 16/10/2016: String.prototype.padStart
+ * @date revision   marc laville : 12/10/2020: réécriture monthNames et dayNames de la classe Date
  *
  * Quelques additions utiles en Javascript
  *
@@ -369,49 +370,14 @@ Date.toLocaleDateStringSupportsLocales = function () {
  * @return {Array}   month name array
  * @author marc laville
  */
-//Date.monthNames = Date.monthNames || function( lang ) {
-Date.monthNames = Date.monthNames || function( locales, optMonth ) {
-	var arrMonth = [],
-		dateRef = new Date(),
-		year = dateRef.getFullYear(),
-        optMonth = optMonth || { month: "long" };
-    
-    locales = locales || 'fr-FR';
-
-	dateRef.setMonth(0);
-	dateRef.setDate(11); // Eviter la fin de mois !!!
-	while (year == dateRef.getFullYear()) {
-		/* push le mois en lettre et passe au mois suivant */
-		arrMonth.push( dateRef.toLocaleString(locales, optMonth) );
-		dateRef.setMonth( dateRef.getMonth() + 1);
-	}
-	
-	return arrMonth;
-}
-/*
-Date.monthNames = Date.monthNames || function( locales, optMonth ) {
-//       ---------------
-	var arrMonth = [],
-		lang = Date.toLocaleDateStringSupportsLocales()  ? (locales || window.navigator.language) : window.navigator.language,
-		indexMonth = 2; // Month position in the String returned to toLocaleString 
-		
-	switch( (lang.split('-'))[0] ) {
-		case 'bg' : ;
-		case 'en' : ;
-		case 'ko' : indexMonth = 1;
-			break;
-		case 'es' : ;
-		case 'pt' : ;
-		case 'sv' : indexMonth = 3;
-			break;
-		default : ;
-	}
-
-    for( var dateRef = new Date(2001, 0, 10), m = 0, arr = [] ; m < 12 ; m++ ) {
-	
+ Date.monthNames = function( locales, optMonth ) {
+//    ----------
+	const arrMonth = [];
+	const lang = locales || window.navigator.language;
+  
+	for( let dateRef = new Date(2001, 0, 10), m = 0 ; m < 12 ; m++ ) {
 		dateRef.setMonth(m);
-		arr = dateRef.toLocaleDateString( lang, { month: optMonth || "long" } ).split(' ');
-		arrMonth.push( arr[ arr.length > 1 ? indexMonth : 0 ].replace(/,$/g, "") );
+		arrMonth.push( dateRef.toLocaleDateString( lang, { month: optMonth || "long" } ) );
 	}
 	
 	return arrMonth;
@@ -421,30 +387,18 @@ Date.monthNames = Date.monthNames || function( locales, optMonth ) {
  * L'Objet Date sait revoyer la liste des noms de jour
  * locales n'est pas supporté par FireFox
  */
-Date.dayNames = Date.dayNames || function( locales ) {
-//       ---------------
-	var arrDay = [],
-		dateRef = new Date(),
-        // Firefox don't support parametres, so we construct option to conform to Firefox format
- //       options = {weekday: "long", year: "numeric", month: "long", day: "numeric"},
-        options = {weekday: "long"},
-		lang = Date.toLocaleDateStringSupportsLocales() ? (locales || window.navigator.language) : window.navigator.language,
-		indexDay = 0; // Day position in the String returned to toLocaleString 
-		
-	switch( (lang.split('-'))[0] ) {
-//		case 'bg' : ;
-		case 'sq' : indexDay = 1;
-			break ;
-		case 'ko' : indexDay = 3;
-			break ;
-		default : 
-	}
 
+Date.dayNames = function( locales, optDay ) {
+//   --------
+	const arrDay = [];
+	const lang = locales || window.navigator.language;
+  let dateRef = new Date()
+  
 	dateRef.setDate( dateRef.getDate() - dateRef.getDay() ); // Now, dateRef.getDay() return 0
 	for( var j = 0 ; j < 7 ; j++ ) {
 		/* push le jour en lettre et passe au jour suivant */
-		arrDay.push( dateRef.toLocaleString( lang, options).split(' ')[indexDay] );
 		dateRef.setDate( dateRef.getDate() + 1);
+		arrDay.push( dateRef.toLocaleDateString( lang, { weekday: optDay || "long" } ) );
 	}
 	
 	return arrDay;
