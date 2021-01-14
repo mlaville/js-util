@@ -371,13 +371,14 @@ Date.toLocaleDateStringSupportsLocales = function () {
  * @author marc laville
  */
  Date.monthNames = function( locales, optMonth ) {
-//    ----------
+//   ----------
 	const arrMonth = [];
 	const lang = locales || window.navigator.language;
+	const option = { month: optMonth || 'long' };
   
 	for( let dateRef = new Date(2001, 0, 10), m = 0 ; m < 12 ; m++ ) {
 		dateRef.setMonth(m);
-		arrMonth.push( dateRef.toLocaleDateString( lang, { month: optMonth || "long" } ) );
+		arrMonth.push( dateRef.toLocaleDateString( lang, option ) );
 	}
 	
 	return arrMonth;
@@ -392,13 +393,15 @@ Date.dayNames = function( locales, optDay ) {
 //   --------
 	const arrDay = [];
 	const lang = locales || window.navigator.language;
+	const option = { month: optMonth || 'long' };
+
   let dateRef = new Date()
   
 	dateRef.setDate( dateRef.getDate() - dateRef.getDay() ); // Now, dateRef.getDay() return 0
 	for( var j = 0 ; j < 7 ; j++ ) {
 		/* push le jour en lettre et passe au jour suivant */
 		dateRef.setDate( dateRef.getDate() + 1);
-		arrDay.push( dateRef.toLocaleDateString( lang, { weekday: optDay || "long" } ) );
+		arrDay.push( dateRef.toLocaleDateString( lang, option ) );
 	}
 	
 	return arrDay;
@@ -452,17 +455,3 @@ Date.prototype.estFerie = function() {
 	return [[0, 1], [4, 1], [4, 8], [6, 14], [7,15], [10, 1], [10, 11], [11,25]].some(egalJourMois)
     || estPaqAscPent( Date.easterDay( this.getFullYear() ) );
 }
-/*
-Array.from = Array.from || function( nodeList ) {
-  var tabFrom = [],
-    long = nodeList.length,
-    i = 0;
-    
-  while( i < long ) {
-    tabFrom.push(nodeList[i]);
-    i++;
-  }
-  
-  return tabFrom;
-}
-*/
