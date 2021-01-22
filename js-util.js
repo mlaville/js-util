@@ -196,9 +196,9 @@ String.prototype.arrayRGB = function() {
 };
 
 /**
- *  "25 1 -3"=>[25, 1, -3]
+ *  "25 1 3"=>[25, 1, 3]
  * @param  none
- * @return {Array}    tableau d'entiers
+ * @return {Array}    tableau d'entiers positifs
  */
 String.prototype.toIntArray = function() {
 //              -----------
@@ -386,9 +386,7 @@ Date.toLocaleDateStringSupportsLocales = function () {
 */
 /*
  * L'Objet Date sait revoyer la liste des noms de jour
- * locales n'est pas supporté par FireFox
  */
-
 Date.dayNames = function( locales, optDay ) {
 //   --------
 	const arrDay = [];
