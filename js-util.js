@@ -370,19 +370,8 @@ Date.toLocaleDateStringSupportsLocales = function () {
  * @return {Array}   month name array
  * @author marc laville
  */
- Date.monthNames = function( locales, optMonth ) {
-//   ----------
-	const arrMonth = [];
-	const lang = locales || window.navigator.language;
-	const option = { month: optMonth || 'long' };
-  
-	for( let dateRef = new Date(2001, 0, 10), m = 0 ; m < 12 ; m++ ) {
-		dateRef.setMonth(m);
-		arrMonth.push( dateRef.toLocaleDateString( lang, option ) );
-	}
-	
-	return arrMonth;
-}
+ Date.monthNames = ( locales, optMonth ) => 
+  [... Array(12)].map( (e, m) => new Date( new Date().setMonth(m, 1) ).toLocaleDateString( locales ?? window.navigator.language, { month: optMonth ?? 'long' } ) );
 */
 /*
  * L'Objet Date sait revoyer la liste des noms de jour
