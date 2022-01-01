@@ -16,6 +16,7 @@
  * @date revision   marc laville : 04/09/2016: String.prototype.parseSearch
  * @date revision   marc laville : 16/10/2016: String.prototype.padStart
  * @date revision   marc laville : 12/10/2020: réécriture monthNames et dayNames de la classe Date
+ * @date revision   marc laville : 01/012022: réécriture Number.prototype.toByteSizeString
  *
  * Quelques additions utiles en Javascript
  *
@@ -321,12 +322,12 @@ Number.prototype.toTimeString = function() {
  * @return {String}    La chaine de type '1.5 Mb'
  */
 Number.prototype.toByteSizeString = function(precision) {
-//                              --------------------------
-    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'],
-      i = (this >= 0) ? parseInt( Math.floor(Math.log(this) / Math.log(1024)) ) : null;
+//               ----------------
+    const  i = (this >= 0) ? parseInt( Math.floor(Math.log(this) / Math.log(1024)) ) : null;
 
-	return (i == null) ? 'n/a' : [ (this / Math.pow(1024, i)).toFixed( precision || 2 ), sizes[i] ].join(' ');
+	return (i == null) ? 'n/a' : [ (this / Math.pow(1024, i)).toFixed( precision ?? 1 ), ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'][i] ].join(' ');
 };
+
 
 /**
  *
