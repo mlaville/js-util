@@ -16,7 +16,8 @@
  * @date revision   marc laville : 04/09/2016: String.prototype.parseSearch
  * @date revision   marc laville : 16/10/2016: String.prototype.padStart
  * @date revision   marc laville : 12/10/2020: réécriture monthNames et dayNames de la classe Date
- * @date revision   marc laville : 01/012022: réécriture Number.prototype.toByteSizeString
+ * @date revision   marc laville : 01/01/2022: réécriture Number.prototype.toByteSizeString
+ * @date revision   marc laville : 09/02/2022: réécriture Number.prototype.toTimeString
  *
  * Quelques additions utiles en Javascript
  *
@@ -307,13 +308,12 @@ String.prototype.render = function(data) {
  * @return {String}    La chaine "hh:mm:ss"
  */
 Number.prototype.toTimeString = function() {
-//                              --------------------
-	var hh = Math.floor(this / 3600),
-		mm = Math.floor((this - (hh * 3600)) / 60),
-		ss = this - (hh * 3600) - (mm * 60),
-		lpad0 = function(n) { return ('0' + n).slice(-2) };
-
-	return [hh, mm, ss].map( lpad0 ).join(':');
+//               ------------
+  return [ 
+    Math.floor(this/3600), // heure
+    ( Math.floor(this/60) % 60 ).toString().padStart(2, '0'), // minute
+    (this % 60).toString().padStart(2, '0') // seconde
+  ].join(':');
 };
 
 /**
@@ -429,11 +429,9 @@ Date.easterDay = function( annee ) {
 
 Date.prototype.estFerie = function() {
 	'use strict';
-	var jourMois = [ this.getMonth(), this.getDate() ],
-      egalJourMois = function(arr) {
-        return arr[0] == jourMois[0] && arr[1] == jourMois[1];
-      },
-	  estPaqAscPent = function( dtPaques ) {
+	const jourMois = [ this.getMonth(), this.getDate() ];
+	const egalJourMois = (arr) => arr[0] == jourMois[0] && arr[1] == jourMois[1];
+	const estPaqAscPent = function( dtPaques ) {
           return [1, 38, 11].some(function(i){
             dtPaques.setDate(dtPaques.getDate() + i);
             
