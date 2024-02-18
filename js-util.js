@@ -371,29 +371,30 @@ Date.toLocaleDateStringSupportsLocales = function () {
  * @return {Array}   month name array
  * @author marc laville
  */
- Date.monthNames = ( locales, optMonth ) => 
-  [... Array(12)].map( (e, m) => new Date( new Date().setMonth(m, 1) ).toLocaleDateString( locales ?? window.navigator.language, { month: optMonth ?? 'long' } ) );
-*/
+Date.monthNames = (locales, optMonth) =>
+//   ----------
+  [...Array(12)].map((e, m) =>
+    new Date(new Date().setMonth(m, 1)).toLocaleDateString(
+      locales ?? window.navigator.language,
+      { month: optMonth ?? "long" }
+    ));
 /*
  * L'Objet Date sait revoyer la liste des noms de jour
  */
-Date.dayNames = function( locales, optDay ) {
+Date.dayNames = function (locales, optDay) {
 //   --------
-	const arrDay = [];
-	const lang = locales || window.navigator.language;
-	const option = { month: optMonth || 'long' };
+  const dateRef = new Date();
 
-  let dateRef = new Date()
+  dateRef.setDate(dateRef.getDate() - dateRef.getDay()); // Place la date sur lundi
   
-	dateRef.setDate( dateRef.getDate() - dateRef.getDay() ); // Now, dateRef.getDay() return 0
-	for( var j = 0 ; j < 7 ; j++ ) {
-		/* push le jour en lettre et passe au jour suivant */
-		dateRef.setDate( dateRef.getDate() + 1);
-		arrDay.push( dateRef.toLocaleDateString( lang, option ) );
-	}
-	
-	return arrDay;
-}
+  return [...Array(7)].map(() => {
+    dateRef.setDate(dateRef.getDate() + 1);
+    return dateRef.toLocaleDateString(locales ?? window.navigator.language, {
+      weekday: optDay ?? "long"
+    });
+  });
+};
+
 
 /**
  * Calcul le jour de Paques
